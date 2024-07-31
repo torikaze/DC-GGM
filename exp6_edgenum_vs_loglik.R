@@ -11,8 +11,7 @@ source('cv_tools_wide_lamrange.R')
 source('data_prep.R')
 source('tools.R')
 
-# Exp1: cross validation ----
-# decide penalty parameters by K-folds cross-validation.
+# Exp 6: log-likelihood during cross validation ----
 METHOD = 'random'
 num_nonzero = 30
 # CV in various setting
@@ -47,11 +46,10 @@ result_exp6 = rbind(edge_loglik_dc_all[,-1], edge_loglik_glasso_all[,-1], edge_l
 today_date = format(Sys.Date(), "%y%m%d")
 save_table_safely(data = result_exp6, path = str_c(path_export, 'table/result_exp6_', METHOD, '_', today_date, '.csv'))
 
-# METHOD = 'random'
-# result_exp6 = read_csv(str_c(path_export, 'table/result_exp6_', METHOD, '_240615.csv'))
 
+# Visualization ----
 levels_n = c("25", "50", "100", "200", "400", "800")
-levels_p = str_c('p=', c("50", "`100", "200", "400"))
+levels_p = str_c('p=', c("50", "100", "200", "400"))
 levels_model = c('DC', 'glasso', 'SCAD', 'adapt')
 levels_pn = unique(result_exp6$n_p)
 
@@ -71,3 +69,4 @@ edge_loglik_fig = result_exp6 |>
   labs(x="# of edges", y='log-likelihood', color='', fill='')
 
 save_pdf_safely(fig=edge_loglik_fig, path = str_c(path_export, 'figure/exp6_log_result_', METHOD, '_', today_date, '.pdf'), width = 8, height = 9)
+

@@ -233,9 +233,7 @@ today_date = format(Sys.Date(), "%y%m%d")
 save_table_safely(data = arrange(result_exp2, p, n, num_edge), path = str_c(path_export, 'table/result_exp2_', METHOD, '_', today_date, '.csv'))
 
 
-METHOD = 'random'
-result_exp2 = read_csv(str_c(path_export, 'table/result_exp2_', METHOD, '_240512.csv'))
-# result_exp2
+# Visualization ----
 levels_n = c("25", "50", "100", "200", "400", "800")
 levels_p = str_c('p=', c("50", "100", "200", "400"))
 levels_model = c('DC', 'glasso', 'SCAD', 'adapt')

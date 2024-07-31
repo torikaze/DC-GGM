@@ -1,5 +1,4 @@
 par(family= "HiraKakuProN-W3")
-path_data = './data/'
 path_export = './output/'
 
 # Library ----
@@ -88,15 +87,9 @@ result_exp1 = rbind(result_cv_glasso_all, result_cv_dc_all, result_cv_scad_all, 
 
 today_date = format(Sys.Date(), "%y%m%d")
 # save_table_safely(data = result_exp1, path = str_c(path_export, 'table/result_exp1_', METHOD, '_', today_date, '.csv'))
-save_table_safely(data = result_exp1, path = str_c('AAA', METHOD, '_', today_date, '.csv'))
 
-# METHOD = 'chain'
-# result_exp1 = read_csv(str_c(path_export, 'table/result_exp1_', METHOD, '_240614.csv'))
-# result_exp1 = result_exp1 |>
-#   mutate_at("F_measure", ~replace(., is.na(.), 0)) |>
-#   group_by(n_p, model) |>
-#   summarise(mean=mean(F_measure), std=sd(F_measure)/sqrt(n_simulation), n_mean=mean(num_edge), n_std=sd(num_edge)/sqrt(n_simulation))
 
+# Visualization ----
 result_exp1 = rbind(summary_cv_glasso, summary_cv_dc, summary_cv_scad, summary_cv_adapt)
 exp1_np = result_exp1$n_p |> str_split("_", simplify=TRUE)
 result_exp1['n'] = exp1_np[,1]
