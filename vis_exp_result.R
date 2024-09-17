@@ -10,9 +10,12 @@ library(grid)
 source('tools.R')
 
 # Visualization for each experiment ----
+n_simulation = 30
+num_nonzero = 30
+
 # Exp1: cross validation ----
-METHOD = 'random'
-result_exp1 = read_csv(str_c(path_export, 'table/result_exp1_', METHOD, '_240615.csv'))
+METHOD = 'chain'
+result_exp1 = read_csv(str_c(path_export, 'table/result_exp1_', METHOD, '_240614.csv'))
 result_exp1 = result_exp1 |>
   mutate_at("F_measure", ~replace(., is.na(.), 0)) |>
   group_by(n_p, model) |>
@@ -127,7 +130,7 @@ p4 = result_exp1 |>
     labs(x='', y='', col='', fill='', caption='(d) p=400')
 
 x_label = textGrob("Sample size", gp=gpar(fontsize=14), vjust=0.3)
-y_label = textGrob("Number of estimated edges", gp=gpar(fontsize=14), rot=90, vjust=1.5)
+y_label = textGrob("Number of selected edges", gp=gpar(fontsize=14), rot=90, vjust=1.5)
 
 legend_exp1 = get_legend(p1 + theme(legend.position = "right"))
 
@@ -147,7 +150,7 @@ save_pdf_safely(fig=fig_exp1_n_vs_numedge, path = str_c(path_export, 'figure/exp
 
 
 # Exp 6: log-likelihood during cross validation ----
-METHOD = 'chain'
+METHOD = 'random'
 result_exp6 = read_csv(str_c(path_export, 'table/result_exp6_', METHOD, '_240615.csv'))
 
 levels_n = c("25", "50", "100", "200", "400", "800")
@@ -274,7 +277,7 @@ p12 = result_exp6 |>
     theme_minimal(base_family="HiraKakuPro-W3") +
     theme(text = element_text(size = 15), legend.key.size = unit(1.3, "cm"), axis.title.y = element_text(margin = margin(t = 0, r = 10, b = 0, l = 0)), plot.caption = element_text(hjust = -0.1, margin = margin(t = -10))) +
     labs(x='', y='', color='', fill='', caption='(l) p=400, n=800')
-x_label = textGrob("Number of estimated edges", gp=gpar(fontsize=14), vjust=0.3)
+x_label = textGrob("Number of selected edges", gp=gpar(fontsize=14), vjust=0.3)
 y_label = textGrob("Log-likelihood", gp=gpar(fontsize=14), rot=90, vjust=1.5)
 
 legend_exp6 = get_legend(p1 + theme(legend.position = "right"))
@@ -303,8 +306,8 @@ save_pdf_safely(fig=fig_exp6_edgenum_vs_loglik, path = str_c(path_export, 'figur
 
 
 # Exp2: estimate fixed number of nonzeo-elements ----
-METHOD = 'random'
-result_exp2 = read_csv(str_c(path_export, 'table/result_exp2_', METHOD, '_240512.csv'))
+METHOD = 'chain'
+result_exp2 = read_csv(str_c(path_export, 'table/result_exp2_', METHOD, '_240511.csv'))
 
 levels_n = c("25", "50", "100", "200", "400", "800")
 levels_p = str_c('p=', c("50", "`100", "200", "400"))
@@ -432,7 +435,7 @@ p12 = result_exp2 |>
     theme(text = element_text(size = 15), legend.key.size = unit(0.7, "cm"), axis.title.y = element_text(margin = margin(t = 0, r = 10, b = 0, l = 0)), plot.caption = element_text(hjust = -0.1, margin = margin(t = -10))) +
     labs(x='', y='', color='', fill='', caption='(l) p=400, n=800') +
     ylim(0, y_axis_max)
-x_label = textGrob("Number of estimated edges", gp=gpar(fontsize=14), vjust=0.3)
+x_label = textGrob("Number of selected edges", gp=gpar(fontsize=14), vjust=0.3)
 y_label = textGrob("F1 score", gp=gpar(fontsize=14), rot=90, vjust=1.5)
 
 legend_exp2 = get_legend(p1 + theme(legend.position = "right"))
@@ -461,7 +464,7 @@ save_pdf_safely(fig=fig_exp2_same_edge_num, path = str_c(path_export, 'figure/ex
 
 
 # Exp4: measure exeution time for each mode ----
-METHOD = 'chain'
+METHOD = 'random'
 result_exp4 = read_csv(str_c(path_export, 'table/exp4_time_comparison_', METHOD, '_240728.csv'))
 
 levels_n = str_c("50", "100", "200", "400")
@@ -512,12 +515,17 @@ fig_exp4 = grid.arrange(
 save_pdf_safely(fig=fig_exp4, path = str_c(path_export, 'figure/exp4_p_vs_time_', METHOD, '.pdf'), width = 8, height = 4)
 
 # n vs time
+time_summary |> filter(p == 100, n %in% c(50, 100, 200)) |>
+  summarise(max_mean = max(mean)) |> summarise(a = max(max_mean))
+time_summary |> filter(p == 400, n %in% c(200, 400, 800)) |>
+  summarise(max_mean = max(mean)) |> summarise(a = max(max_mean))
 p1 = time_summary |> filter(model %in% c('DC', 'glasso')) |>
     filter(p == 100, n %in% c(50, 100, 200)) |>
     ggplot(aes(x=factor(n, levels=c(50, 100, 200)), y=mean)) +
     geom_point(aes(color=factor(model, levels=levels_model), shape=factor(model, levels=levels_model)), size=3) +
     geom_line(aes(color=factor(model, levels=levels_model), group=model)) +
     scale_shape_manual(values=c('DC'=19, 'glasso'=17)) +
+    scale_y_continuous(expand = c(0, 0), limits = c(0, 0.0280*1.1)) +
     theme_minimal(base_family="HiraKakuPro-W3") +
     theme(text = element_text(size = 20), legend.key.size = unit(1, "cm"), axis.title.y = element_text(margin = margin(t = 0, r = 10, b = 0, l = 0)), plot.caption = element_text(hjust = -0.1, margin = margin(t = 1)), axis.title.x = element_text(size = 13)) +
     labs(x="Sample size", y='', color=NULL, shape=NULL, caption='(a) p=100')
@@ -527,12 +535,10 @@ p2 = time_summary |> filter(model %in% c('DC', 'glasso')) |>
     geom_point(aes(color=factor(model, levels=levels_model), shape=factor(model, levels=levels_model)), size=3) +
     geom_line(aes(color=factor(model, levels=levels_model), group=model)) +
     scale_shape_manual(values=c('DC'=19, 'glasso'=17)) +
+    scale_y_continuous(expand = c(0, 0), limits = c(0, 1.27*1.1)) +
     theme_minimal(base_family="HiraKakuPro-W3") +
     theme(text = element_text(size = 20), legend.key.size = unit(1, "cm"), axis.title.y = element_text(margin = margin(t = 0, r = 10, b = 0, l = 0)), plot.caption = element_text(hjust = -0.1, margin = margin(t = 1)), axis.title.x = element_text(size = 13)) +
     labs(x="Sample size", y='', color=NULL, shape=NULL, caption='(b) p=400')
-
-time_summary |> filter(model %in% c('DC', 'glasso')) |>
-    filter(p == 100, n %in% c(50, 100, 200))
 
 x_label = textGrob(NULL, gp=gpar(fontsize=14), vjust=0.3)
 y_label = textGrob("Computation time (s)", gp=gpar(fontsize=14), rot=90, vjust=1.5)
