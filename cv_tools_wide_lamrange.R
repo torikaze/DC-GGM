@@ -7,6 +7,7 @@ library(parallel)
 library(tictoc)
 
 source('dc_ggm.R')
+source('tools.R')
 
 NUM_CORES = detectCores()
 # DC
@@ -292,3 +293,4 @@ cv_comparison = function(data, S, true_graph) {
   )
   return(result)
 }
+

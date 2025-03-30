@@ -6,6 +6,7 @@ library(dplyr)
 library(gridExtra)
 library(tidyverse)
 library(grid)
+library(cowplot)
 
 source('tools.R')
 
@@ -14,8 +15,8 @@ n_simulation = 30
 num_nonzero = 30
 
 # Exp1: cross validation ----
-METHOD = 'chain'
-result_exp1 = read_csv(str_c(path_export, 'table/result_exp1_', METHOD, '_240614.csv'))
+METHOD = 'random'
+result_exp1 = read_csv(str_c(path_export, 'table/result_exp1_', METHOD, '_240615.csv'))
 result_exp1 = result_exp1 |>
   mutate_at("F_measure", ~replace(., is.na(.), 0)) |>
   group_by(n_p, model) |>
@@ -99,7 +100,7 @@ p1 = result_exp1 |>
     geom_errorbar(aes(ymin = n_mean - 2*n_std, ymax = n_mean+2*n_std, color=factor(model, levels=levels_model)), position=position_dodge(.9), width = 0.4, alpha = 1, show.legend = FALSE) +
     geom_bar(aes(col=factor(model, levels=levels_model), fill=factor(model, levels=levels_model)), color='gray', alpha=0.5, position='dodge', stat='identity', show.legend = TRUE) +
     theme_minimal(base_family="HiraKakuPro-W3") +
-    theme(text = element_text(size = 15), legend.key.size = unit(0.7, "cm"), axis.title.y = element_text(margin = margin(t = 0, r = 10, b = 0, l = 0)), plot.caption = element_text(hjust = -0.3, margin = margin(t = -10))) +
+    theme(text = element_text(size = 15), legend.key.size = unit(0.7, "cm"), axis.title.y = element_text(margin = margin(t = 0, r = 19, b = 0, l = 0)), plot.caption = element_text(hjust = -0.3, margin = margin(t = -10))) +
     labs(x='', y='', col='', fill='', caption='(a) p=50')
 p2 = result_exp1 |>
     filter(p == 'p=100') |>
@@ -108,7 +109,7 @@ p2 = result_exp1 |>
     geom_errorbar(aes(ymin = n_mean - 2*n_std, ymax = n_mean+2*n_std, color=factor(model, levels=levels_model)), position=position_dodge(.9), width = 0.4, alpha = 1, show.legend = FALSE) +
     geom_bar(aes(col=factor(model, levels=levels_model), fill=factor(model, levels=levels_model)), color='gray', alpha=0.5, position='dodge', stat='identity', show.legend = TRUE) +
     theme_minimal(base_family="HiraKakuPro-W3") +
-    theme(text = element_text(size = 15), legend.key.size = unit(0.7, "cm"), axis.title.y = element_text(margin = margin(t = 0, r = 10, b = 0, l = 0)), plot.caption = element_text(hjust = -0.3, margin = margin(t = -10))) +
+    theme(text = element_text(size = 15), legend.key.size = unit(0.7, "cm"), axis.title.y = element_text(margin = margin(t = 0, r = 17, b = 0, l = 0)), plot.caption = element_text(hjust = -0.3, margin = margin(t = -10))) +
     labs(x='', y='', col='', fill='', caption='(b) p=100')
 p3 = result_exp1 |>
     filter(p == 'p=200') |>
@@ -146,11 +147,11 @@ fig_exp1_n_vs_numedge = grid.arrange(
     bottom = x_label,
     left = y_label)
 
-save_pdf_safely(fig=fig_exp1_n_vs_numedge, path = str_c(path_export, 'figure/exp1_n_vs_numedge_', METHOD, '.pdf'), width = 6, height = 4)
+save_pdf_safely(fig=fig_exp1_n_vs_numedge, path = str_c(path_export, 'figure/exp1_n_vs_numedge_', METHOD, '2.pdf'), width = 6, height = 4)
 
 
 # Exp 6: log-likelihood during cross validation ----
-METHOD = 'random'
+METHOD = 'chain'
 result_exp6 = read_csv(str_c(path_export, 'table/result_exp6_', METHOD, '_240615.csv'))
 
 levels_n = c("25", "50", "100", "200", "400", "800")
@@ -185,7 +186,7 @@ p3 = result_exp6 |>
     geom_vline(xintercept=30, linetype="dashed", color="black") +
     scale_x_log10(labels = scales::trans_format("log10", scales::math_format(10^.x, format = function(x) sprintf("%.0f", x)))) +
     theme_minimal(base_family="HiraKakuPro-W3") +
-    theme(text = element_text(size = 15), legend.key.size = unit(1.3, "cm"), axis.title.y = element_text(margin = margin(t = 0, r = 10, b = 0, l = 0)), plot.caption = element_text(hjust = -0.1, margin = margin(t = -10))) +
+    theme(text = element_text(size = 15), legend.key.size = unit(1.3, "cm"), axis.title.y = element_text(margin = margin(t = 0, r = 24, b = 0, l = 0)), plot.caption = element_text(hjust = -0.1, margin = margin(t = -10))) +
     labs(x='', y='', color='', fill='', caption='(c) p=50, n=100')
 p4 = result_exp6 |>
     filter(n_p == '50_100') |>
@@ -195,7 +196,7 @@ p4 = result_exp6 |>
     geom_vline(xintercept=30, linetype="dashed", color="black") +
     scale_x_log10(labels = scales::trans_format("log10", scales::math_format(10^.x, format = function(x) sprintf("%.0f", x)))) +
     theme_minimal(base_family="HiraKakuPro-W3") +
-    theme(text = element_text(size = 15), legend.key.size = unit(1.3, "cm"), axis.title.y = element_text(margin = margin(t = 0, r = 10, b = 0, l = 0)), plot.caption = element_text(hjust = -0.1, margin = margin(t = -10))) +
+    theme(text = element_text(size = 15), legend.key.size = unit(1.3, "cm"), axis.title.y = element_text(margin = margin(t = 0, r = -4, b = 0, l = 0)), plot.caption = element_text(hjust = -0.1, margin = margin(t = -10))) +
     labs(x='', y='', color='', fill='', caption='(d) p=100, n=50')
 p5 = result_exp6 |>
     filter(n_p == '100_100') |>
@@ -205,7 +206,7 @@ p5 = result_exp6 |>
     geom_vline(xintercept=30, linetype="dashed", color="black") +
     scale_x_log10(labels = scales::trans_format("log10", scales::math_format(10^.x, format = function(x) sprintf("%.0f", x)))) +
     theme_minimal(base_family="HiraKakuPro-W3") +
-    theme(text = element_text(size = 15), legend.key.size = unit(1.3, "cm"), axis.title.y = element_text(margin = margin(t = 0, r = 10, b = 0, l = 0)), plot.caption = element_text(hjust = -0.1, margin = margin(t = -10))) +
+    theme(text = element_text(size = 15), legend.key.size = unit(1.3, "cm"), axis.title.y = element_text(margin = margin(t = 0, r = 3, b = 0, l = 0)), plot.caption = element_text(hjust = -0.1, margin = margin(t = -10))) +
     labs(x='', y='', color='', fill='', caption='(e) p=100, n=100')
 p6 = result_exp6 |>
     filter(n_p == '200_100') |>
@@ -225,7 +226,7 @@ p7 = result_exp6 |>
     geom_vline(xintercept=30, linetype="dashed", color="black") +
     scale_x_log10(labels = scales::trans_format("log10", scales::math_format(10^.x, format = function(x) sprintf("%.0f", x)))) +
     theme_minimal(base_family="HiraKakuPro-W3") +
-    theme(text = element_text(size = 15), legend.key.size = unit(1.3, "cm"), axis.title.y = element_text(margin = margin(t = 0, r = 10, b = 0, l = 0)), plot.caption = element_text(hjust = -0.1, margin = margin(t = -10))) +
+    theme(text = element_text(size = 15), legend.key.size = unit(1.3, "cm"), axis.title.y = element_text(margin = margin(t = 0, r = 1, b = 0, l = 0)), plot.caption = element_text(hjust = -0.1, margin = margin(t = -10))) +
     labs(x='', y='', color='', fill='', caption='(g) p=200, n=100')
 p8 = result_exp6 |>
     filter(n_p == '200_200') |>
@@ -235,7 +236,7 @@ p8 = result_exp6 |>
     geom_vline(xintercept=30, linetype="dashed", color="black") +
     scale_x_log10(labels = scales::trans_format("log10", scales::math_format(10^.x, format = function(x) sprintf("%.0f", x)))) +
     theme_minimal(base_family="HiraKakuPro-W3") +
-    theme(text = element_text(size = 15), legend.key.size = unit(1.3, "cm"), axis.title.y = element_text(margin = margin(t = 0, r = 10, b = 0, l = 0)), plot.caption = element_text(hjust = -0.1, margin = margin(t = -10))) +
+    theme(text = element_text(size = 15), legend.key.size = unit(1.3, "cm"), axis.title.y = element_text(margin = margin(t = 0, r = -7, b = 0, l = 0)), plot.caption = element_text(hjust = -0.1, margin = margin(t = -10))) +
     labs(x='', y='', color='', fill='', caption='(h) p=200, n=200')
 p9 = result_exp6 |>
     filter(n_p == '400_200') |>
@@ -255,7 +256,7 @@ p10 = result_exp6 |>
     geom_vline(xintercept=30, linetype="dashed", color="black") +
     scale_x_log10(labels = scales::trans_format("log10", scales::math_format(10^.x, format = function(x) sprintf("%.0f", x)))) +
     theme_minimal(base_family="HiraKakuPro-W3") +
-    theme(text = element_text(size = 15), legend.key.size = unit(1.3, "cm"), axis.title.y = element_text(margin = margin(t = 0, r = 10, b = 0, l = 0)), plot.caption = element_text(hjust = -0.1, margin = margin(t = -10))) +
+    theme(text = element_text(size = 15), legend.key.size = unit(1.3, "cm"), axis.title.y = element_text(margin = margin(t = 0, r = -3, b = 0, l = 0)), plot.caption = element_text(hjust = -0.1, margin = margin(t = -10))) +
     labs(x='', y='', color='', fill='', caption='(j) p=400, n=200')
 p11 = result_exp6 |>
     filter(n_p == '400_400') |>
@@ -265,7 +266,7 @@ p11 = result_exp6 |>
     geom_vline(xintercept=30, linetype="dashed", color="black") +
     scale_x_log10(labels = scales::trans_format("log10", scales::math_format(10^.x, format = function(x) sprintf("%.0f", x)))) +
     theme_minimal(base_family="HiraKakuPro-W3") +
-    theme(text = element_text(size = 15), legend.key.size = unit(1.3, "cm"), axis.title.y = element_text(margin = margin(t = 0, r = 10, b = 0, l = 0)), plot.caption = element_text(hjust = -0.1, margin = margin(t = -10))) +
+    theme(text = element_text(size = 15), legend.key.size = unit(1.3, "cm"), axis.title.y = element_text(margin = margin(t = 0, r = -7, b = 0, l = 0)), plot.caption = element_text(hjust = -0.1, margin = margin(t = -10))) +
     labs(x='', y='', color='', fill='', caption='(k) p=400, n=400')
 p12 = result_exp6 |>
     filter(n_p == '800_400') |>
@@ -302,11 +303,10 @@ fig_exp6_edgenum_vs_loglik = grid.arrange(
     bottom = x_label,
     left = y_label)
 
-save_pdf_safely(fig=fig_exp6_edgenum_vs_loglik, path = str_c(path_export, 'figure/exp6_edgenum_vs_loglik_', METHOD, '.pdf'), width = 9, height = 9)
-
+save_pdf_safely(fig=fig_exp6_edgenum_vs_loglik, path = str_c(path_export, 'figure/exp6_edgenum_vs_loglik_', METHOD, '2.pdf'), width = 9, height = 9)
 
 # Exp2: estimate fixed number of nonzeo-elements ----
-METHOD = 'chain'
+METHOD = 'random'
 result_exp2 = read_csv(str_c(path_export, 'table/result_exp2_', METHOD, '_240511.csv'))
 
 levels_n = c("25", "50", "100", "200", "400", "800")
